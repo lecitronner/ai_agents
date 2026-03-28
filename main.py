@@ -22,17 +22,9 @@ class ResponseFormat:
 ### TOOLS ###
 @tool('get_weather', description='Return weather information for a given city', return_direct=False)
 def get_weather(city: str):
-    print('DEBUG: sending api, city', city)
+    #print('DEBUG: sending api, city', city)
     response = requests.get(f'https://wttr.in/{city}?format=j1')
-    data = response.json()
-    current = data['current_condition'][0]
-    return {
-        'temp_C': current['temp_C'],
-        'temp_F': current['temp_F'],
-        'humidity': current['humidity'],
-        'description': current['weatherDesc'][0]['value'],
-        'feelsLikeC': current['FeelsLikeC'],
-    }
+    return response.json()
 
 @tool('locate_user', description="ALWAYS call this first to find the user's city when no city is explicitly mentioned in the message.")
 def locate_user(runtime: ToolRuntime[Context]):
@@ -76,7 +68,7 @@ response = agent.invoke({
         {'role': 'user', 'content': 'What is the weather like?'}
     ]},
     config = config,
-    context=Context(user_id='HJK111')
+    context=Context(user_id='qrhqe')
 )
 print(response)
 print(response['messages'][-1].content)
