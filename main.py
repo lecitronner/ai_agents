@@ -1,11 +1,15 @@
 from dataclasses import dataclass
-
+from dotenv import load_dotenv
 import requests
+import os
 
 from langchain.agents import create_agent
 from langchain.tools import tool, ToolRuntime
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import InMemorySaver
+from langchain_openai import ChatOpenAI
+
+load_dotenv()
 
 ### DATACLASSES ###
 @dataclass()
@@ -39,9 +43,12 @@ def locate_user(runtime: ToolRuntime[Context]):
             return "Unknown"
 
 ### MODEL ###
-model = init_chat_model(model="qwen2.5:7b",
-                        model_provider="ollama",
-                        temperature=0.3)
+model = ChatOpenAI(
+    model="google/gemini-flash-1.5",
+    api_key=os.getenv('OPENROUTER_API_KEY'),
+    base_url="https://openrouter.ai/api/v1",
+    temperature=0,
+)
 
 ### Remembering conversation
 checkpointer = InMemorySaver()
@@ -68,7 +75,7 @@ response = agent.invoke({
         {'role': 'user', 'content': 'What is the weather like?'}
     ]},
     config = config,
-    context=Context(user_id='qrhqe')
+    context=Context(user_id='ABC123')
 )
 print(response)
 print(response['messages'][-1].content)
